@@ -6057,7 +6057,16 @@ function toggleDevMode(){
   const devNav=document.getElementById('nav-dev');
   if(devNav)devNav.style.display=devModeActive?'flex':'none';
   notify(devModeActive?'DEV MODE ON':'DEV MODE OFF',devModeActive?'Developer console activated':'Console hidden','warning');
-  if(devModeActive){renderDevPanel();switchTab('dev');}
+  if(devModeActive){
+    renderDevPanel();
+    switchTab('dev');
+  } else {
+    // If currently on dev tab, go back to quests
+    if(S.activeTab==='dev') switchTab('quests');
+    // Clear dev panel so it shows the "not active" message if reopened
+    const el=document.getElementById('dev-panel');
+    if(el)el.innerHTML=`<div style="text-align:center;padding:40px;font-family:var(--FM);font-size:0.65rem;color:var(--txt3);">Dev mode not active.</div>`;
+  }
 }
 function renderDevPanel(){
   const el=document.getElementById('dev-panel');if(!el)return;
