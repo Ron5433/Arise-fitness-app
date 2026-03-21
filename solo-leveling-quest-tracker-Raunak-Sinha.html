@@ -1072,7 +1072,30 @@ input,select{font-size:16px!important;}/* prevents iOS zoom-on-focus */
 .badge-item.earned .badge-name{color:var(--gold);}
 /* ===== RESPONSIVE additions ===== */
 @media(max-width:480px){.sr-grid{grid-template-columns:repeat(2,1fr);}.badge-grid{grid-template-columns:repeat(3,1fr)!important;}}
-/* ===== LEADERBOARD ===== */
+/* ===== QUEST TIMER ===== */
+.timer-btn{background:rgba(255,140,0,0.1);border:1px solid var(--orange);color:var(--orange);font-family:var(--F);font-size:0.46rem;letter-spacing:0.08em;padding:6px 10px;border-radius:3px;cursor:pointer;transition:var(--ease);white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:4px;}
+.timer-btn:hover{background:rgba(255,140,0,0.2);transform:translateY(-1px);}
+.timer-btn.running{border-color:var(--red);color:var(--red);background:rgba(255,51,85,0.1);animation:blink 0.8s infinite;}
+.timer-btn::before{content:'⏱';font-size:0.7rem;}
+#quest-timer-overlay{position:fixed;inset:0;z-index:280;background:rgba(0,0,0,0.95);display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+#quest-timer-overlay.vis{display:flex;}
+.qt-exercise-name{font-family:var(--F);font-size:clamp(0.7rem,3vw,1rem);font-weight:700;letter-spacing:0.15em;color:var(--txt2);margin-bottom:8px;text-align:center;}
+.qt-target-lbl{font-family:var(--FM);font-size:0.6rem;color:var(--txt3);letter-spacing:0.2em;margin-bottom:24px;}
+.qt-ring-wrap{position:relative;width:200px;height:200px;margin-bottom:24px;}
+.qt-ring-bg{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:8;}
+.qt-ring-fill{fill:none;stroke-width:8;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 0.9s linear;stroke:var(--blue);}
+.qt-ring-fill.warning{stroke:var(--orange);}
+.qt-ring-fill.danger{stroke:var(--red);}
+.qt-time-display{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.qt-digits{font-family:var(--F);font-size:clamp(2.2rem,8vw,3.5rem);font-weight:900;color:var(--blue);text-shadow:0 0 30px var(--blue);letter-spacing:0.06em;line-height:1;}
+.qt-digits.warning{color:var(--orange);text-shadow:0 0 30px var(--orange);}
+.qt-digits.danger{color:var(--red);text-shadow:0 0 30px var(--red);}
+.qt-phase{font-family:var(--FM);font-size:0.55rem;letter-spacing:0.2em;color:var(--txt3);margin-top:6px;}
+.qt-kcal{font-family:var(--FM);font-size:0.62rem;color:var(--red);margin-bottom:20px;}
+.qt-btn-row{display:flex;gap:12px;}
+.qt-action-btn{background:transparent;border:2px solid var(--blue);color:var(--blue);font-family:var(--F);font-size:0.65rem;letter-spacing:0.15em;padding:12px 24px;border-radius:6px;cursor:pointer;transition:var(--ease);}
+.qt-action-btn:hover{background:var(--blue3);}
+.qt-skip-btn{border-color:var(--border);color:var(--txt3);font-size:0.6rem;padding:10px 18px;}
 .lb-row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px;transition:var(--ease);}
 .lb-row.me{border-color:var(--blue);background:rgba(0,212,255,0.04);box-shadow:0 0 12px var(--blue3);}
 .lb-rank-num{font-family:var(--F);font-size:1rem;font-weight:900;color:var(--txt3);width:28px;text-align:center;flex-shrink:0;}
@@ -1727,6 +1750,31 @@ input,select{font-size:16px!important;}/* prevents iOS zoom-on-focus */
   <button class="arise-btn" onclick="triggerArise()" title="..."></button>
 
 </div><!-- end main-app -->
+
+<!-- QUEST TIMER OVERLAY -->
+<div id="quest-timer-overlay">
+  <button onclick="questTimerStop()" style="position:absolute;top:16px;right:16px;background:transparent;border:1px solid var(--border);border-radius:50%;width:32px;height:32px;color:var(--txt3);font-size:0.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+  <div class="qt-exercise-name" id="qt-name">PLANK</div>
+  <div class="qt-target-lbl" id="qt-target-lbl">HOLD FOR 60 SECONDS</div>
+  <!-- SVG ring progress -->
+  <div class="qt-ring-wrap">
+    <svg viewBox="0 0 200 200" width="200" height="200">
+      <circle class="qt-ring-bg" cx="100" cy="100" r="88"/>
+      <circle class="qt-ring-fill" id="qt-ring" cx="100" cy="100" r="88"
+        stroke-dasharray="553" stroke-dashoffset="0"/>
+    </svg>
+    <div class="qt-time-display">
+      <div class="qt-digits" id="qt-digits">1:00</div>
+      <div class="qt-phase" id="qt-phase">⚔ HOLD</div>
+    </div>
+  </div>
+  <div class="qt-kcal" id="qt-kcal">🔥 0 kcal burned</div>
+  <div class="qt-btn-row">
+    <button class="qt-action-btn" id="qt-pause-btn" onclick="questTimerPause()">⏸ PAUSE</button>
+    <button class="qt-action-btn qt-skip-btn" onclick="questTimerSkip()">SKIP →</button>
+  </div>
+  <div style="font-family:var(--FM);font-size:0.52rem;color:var(--txt3);margin-top:16px;text-align:center;line-height:1.8;">When the timer ends, the quest is automatically<br>marked complete and a rest timer begins.</div>
+</div>
 
 <!-- ===== OVERLAYS ===== -->
 
@@ -2919,12 +2967,16 @@ function renderQuestsTab(){
     let tgt=q.tgt;// already scaled by getTodayQuests
     const detailKey=q.exKey||q.key;
     const burnTag=q.burn?`<div class="qburn">🔥 −${q.burn} kcal</div>`:'';
+    // Detect time-based quests (targets like "30 sec", "3 min", "45 sec", "2 min")
+    const timeSecs=parseTargetToSeconds(q.tgt);
+    const timerBtn=(!done&&timeSecs>0)?`<button class="timer-btn" id="tbtn-${q.key}" onclick="event.stopPropagation();startQuestTimer('${q.key}','${q.nm.replace(/'/g,"\\'")}','${q.tgt}',${timeSecs},${q.xp},${q.burn||0},'${q.stat||''}',${q.sv||0})">START</button>`:'';
     const card=document.createElement('div');
     card.className='quest-card'+(done?' done':'');card.id='qc-'+q.key;
     card.innerHTML=`<div class="parts" id="pts-${q.key}"></div>
       <div class="qi qi-clickable" onclick="event.stopPropagation();openExerciseDetail('${detailKey}')" title="View exercise guide">${q.ico}</div>
       <div class="qinfo"><div class="qname">${q.nm}</div><div class="qtarget">${done?'✓ ':''} ${tgt}</div>${burnTag}</div>
       <div class="qxp">${done?`<span class="xp-e">+${q.xp} XP</span>`:`<span>${q.xp} XP</span>`}</div>
+      ${timerBtn}
       <button class="cbtn${done?' done':''}" onclick="completeQuest('${q.key}',${q.xp},'${q.stat||''}',${q.sv||0})">${done?'✓ DONE':'COMPLETE'}</button>`;
     list.appendChild(card);
   });
@@ -5978,7 +6030,171 @@ function appendFormMsg(muscleId,text,role){
 }
 
 // ══════════════════════════════════════════════════════
-// LEADERBOARD
+// QUEST TIMER
+// ══════════════════════════════════════════════════════
+
+// Parse a target string like "30 sec", "3 min", "45 sec", "1.5 min", "3 min 30 sec"
+// Returns seconds, or 0 if not time-based
+function parseTargetToSeconds(tgt){
+  if(!tgt)return 0;
+  let total=0;
+  // "X min Y sec" or "X min" (ignores anything after like "AMRAP")
+  const minSec=tgt.match(/(\d+(?:\.\d+)?)\s*min(?:\s*(\d+)\s*sec?)?/i);
+  if(minSec){total+=parseFloat(minSec[1])*60;if(minSec[2])total+=parseInt(minSec[2]);return Math.round(total);}
+  // "X sec" only
+  const secOnly=tgt.match(/^(\d+(?:\.\d+)?)\s*sec/i);
+  if(secOnly)return Math.round(parseFloat(secOnly[1]));
+  return 0;
+}
+
+// Active timer state
+let qtState={
+  running:false,paused:false,
+  key:'',name:'',totalSecs:0,remainingSecs:0,
+  xp:0,burn:0,stat:'',sv:0,
+  interval:null,
+  phase:'work',// 'work' | 'rest'
+  restSecs:0,restRemaining:0,
+  burnPerSec:0,
+};
+const QT_CIRCUMFERENCE=2*Math.PI*88;// SVG circle r=88 → C≈553
+
+function startQuestTimer(key,name,tgt,totalSecs,xp,burn,stat,sv){
+  // If already running a different timer, ask user
+  if(qtState.running&&qtState.key!==key){
+    if(!confirm(`Stop current timer for ${qtState.name} and start ${name}?`))return;
+    questTimerStop();
+  }
+  // Rest time = roughly equal to work time, capped at 120s
+  const restSecs=Math.min(Math.round(totalSecs*0.75),120);
+  qtState={
+    running:true,paused:false,
+    key,name,totalSecs,remainingSecs:totalSecs,
+    xp,burn,stat,sv,
+    interval:null,phase:'work',
+    restSecs,restRemaining:restSecs,
+    burnPerSec:burn>0?burn/totalSecs:0,
+  };
+  // Update button style on card
+  const btn=document.getElementById('tbtn-'+key);
+  if(btn)btn.classList.add('running');
+  // Show overlay
+  document.getElementById('qt-name').textContent=name;
+  document.getElementById('qt-target-lbl').textContent=`HOLD FOR ${tgt.toUpperCase()}`;
+  document.getElementById('qt-pause-btn').textContent='⏸ PAUSE';
+  document.getElementById('quest-timer-overlay').classList.add('vis');
+  qtUpdateDisplay();
+  qtState.interval=setInterval(qtTick,1000);
+  // Sound: single tone at start
+  tone(660,0.15,'triangle');
+}
+
+function qtTick(){
+  if(qtState.paused)return;
+  if(qtState.phase==='work'){
+    qtState.remainingSecs--;
+    if(qtState.remainingSecs<=0){
+      // Work phase done!
+      clearInterval(qtState.interval);
+      qtWorkDone();
+      return;
+    }
+    // Warning sounds at 10s and 5s
+    if(qtState.remainingSecs===10)tone(880,0.1,'triangle');
+    if(qtState.remainingSecs<=5&&qtState.remainingSecs>0)tone(1046,0.08,'sine');
+  }else{
+    // Rest phase
+    qtState.restRemaining--;
+    if(qtState.restRemaining<=0){questTimerStop();return;}
+  }
+  qtUpdateDisplay();
+}
+
+function qtWorkDone(){
+  // Auto-complete the quest
+  tone(880,0.2,'triangle');setTimeout(()=>tone(1046,0.2,'triangle'),150);setTimeout(()=>tone(1318,0.35,'triangle'),300);
+  // Mark quest complete
+  completeQuest(qtState.key,qtState.xp,qtState.stat,qtState.sv);
+  // Switch to rest countdown
+  qtState.phase='rest';
+  qtState.restRemaining=qtState.restSecs;
+  document.getElementById('qt-target-lbl').textContent='REST PERIOD';
+  document.getElementById('qt-pause-btn').textContent='⏭ SKIP REST';
+  document.getElementById('qt-pause-btn').onclick=()=>questTimerStop();
+  document.getElementById('qt-kcal').textContent='✓ QUEST COMPLETE — REST NOW';
+  // Reset ring to full and change colour
+  const ring=document.getElementById('qt-ring');
+  if(ring){ring.style.stroke='var(--green)';ring.style.strokeDashoffset='0';}
+  qtUpdateDisplay();
+  qtState.interval=setInterval(qtTick,1000);
+  tone(440,0.5,'sine',0.1);
+}
+
+function qtUpdateDisplay(){
+  const isRest=qtState.phase==='rest';
+  const secs=isRest?qtState.restRemaining:qtState.remainingSecs;
+  const total=isRest?qtState.restSecs:qtState.totalSecs;
+  // Format time
+  const m=Math.floor(secs/60);const s=secs%60;
+  const display=`${m>0?m+':':''}${m>0?s.toString().padStart(2,'0'):s}${m===0?' sec':''}`;
+  const digits=document.getElementById('qt-digits');
+  const phase=document.getElementById('qt-phase');
+  const kcal=document.getElementById('qt-kcal');
+  const ring=document.getElementById('qt-ring');
+  if(digits){
+    digits.textContent=display;
+    const pct=secs/total;
+    digits.className='qt-digits'+(isRest?' ':(pct<=0.33?' danger':pct<=0.55?' warning':''));
+  }
+  if(phase)phase.textContent=isRest?'💤 REST':'⚔ HOLD';
+  if(kcal&&!isRest){
+    const burned=Math.round((qtState.totalSecs-qtState.remainingSecs)*qtState.burnPerSec);
+    kcal.textContent=`🔥 ${burned} kcal burned`;
+  }
+  // Ring progress
+  if(ring&&!isRest){
+    const progress=secs/total;
+    const offset=QT_CIRCUMFERENCE*(1-progress);
+    ring.style.strokeDasharray=QT_CIRCUMFERENCE;
+    ring.style.strokeDashoffset=offset;
+    const pct=secs/total;
+    ring.style.stroke=pct<=0.33?'var(--red)':pct<=0.55?'var(--orange)':'var(--blue)';
+    ring.className=`qt-ring-fill${pct<=0.33?' danger':pct<=0.55?' warning':''}`;
+  }else if(ring&&isRest){
+    const progress=secs/total;
+    ring.style.strokeDasharray=QT_CIRCUMFERENCE;
+    ring.style.strokeDashoffset=QT_CIRCUMFERENCE*(1-progress);
+    ring.style.stroke='var(--green)';
+  }
+}
+
+function questTimerPause(){
+  if(qtState.phase==='rest'){questTimerStop();return;}
+  qtState.paused=!qtState.paused;
+  const btn=document.getElementById('qt-pause-btn');
+  if(btn)btn.textContent=qtState.paused?'▶ RESUME':'⏸ PAUSE';
+  if(qtState.paused)tone(440,0.1,'sine');
+}
+
+function questTimerSkip(){
+  // Skip directly to completing the quest without waiting
+  clearInterval(qtState.interval);
+  completeQuest(qtState.key,qtState.xp,qtState.stat,qtState.sv);
+  questTimerStop();
+}
+
+function questTimerStop(){
+  clearInterval(qtState.interval);
+  document.getElementById('quest-timer-overlay').classList.remove('vis');
+  // Restore button
+  const btn=document.getElementById('tbtn-'+qtState.key);
+  if(btn)btn.classList.remove('running');
+  // Reset pause button onclick
+  const pb=document.getElementById('qt-pause-btn');
+  if(pb){pb.textContent='⏸ PAUSE';pb.onclick=()=>questTimerPause();}
+  qtState={running:false,paused:false,key:'',name:'',totalSecs:0,remainingSecs:0,
+    xp:0,burn:0,stat:'',sv:0,interval:null,phase:'work',restSecs:0,restRemaining:0,burnPerSec:0};
+}
 // ══════════════════════════════════════════════════════
 const DEV_EMAIL='raunak30sinha@gmail.com';
 const RANK_COLORS_LB={E:'#888',D:'#4ade80',C:'#60a5fa',B:'#7b2fff',A:'#ffd700',S:'#00d4ff'};
